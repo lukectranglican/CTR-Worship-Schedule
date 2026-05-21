@@ -1,0 +1,2606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTR — Clergy & Worship Schedule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf6ed;
+    --surface: #fffdf8;
+    --surface-2: #f4ecdb;
+    --ink: #1a1612;
+    --ink-soft: #4a4339;
+    --ink-mute: #847964;
+    --line: #e6dcc5;
+    --line-soft: #efe7d4;
+    --oxblood: #6e1a1f;
+    --oxblood-deep: #4f1216;
+    --gold: #a07419;
+    --gold-soft: #c89d3f;
+
+    /* Liturgical colors */
+    --col-advent: #4a2466;
+    --col-christmas: #d4a437;
+    --col-epiphany: #2d6a4f;
+    --col-lent: #5b2876;
+    --col-holyweek: #6e1a1f;
+    --col-easter: #d4a437;
+    --col-pentecost: #b32a2a;
+    --col-ordinary: #4a6b3a;
+    --col-feast: #b32a2a;
+    --col-white: #c9a96e;
+
+    --shadow-sm: 0 1px 2px rgba(74, 60, 30, 0.06);
+    --shadow-md: 0 4px 16px rgba(74, 60, 30, 0.08);
+    --shadow-lg: 0 12px 32px rgba(74, 60, 30, 0.12);
+
+    --r-sm: 4px;
+    --r-md: 6px;
+    --r-lg: 10px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(160, 116, 25, 0.04), transparent 40%),
+      radial-gradient(circle at 85% 92%, rgba(110, 26, 31, 0.03), transparent 50%);
+    min-height: 100vh;
+  }
+
+  /* === Page chrome === */
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 28px 80px;
+  }
+
+  header.masthead {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .brand .eyebrow {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 500;
+  }
+
+  .brand h1 {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 38px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.05;
+  }
+
+  .brand h1 .amp {
+    font-style: italic;
+    color: var(--oxblood);
+    font-weight: 400;
+  }
+
+  .brand .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .status {
+    font-size: 12px;
+    color: var(--ink-mute);
+    font-style: italic;
+    letter-spacing: 0.02em;
+    min-width: 80px;
+    text-align: right;
+    transition: color 0.3s;
+  }
+  .status.saving { color: var(--gold); }
+  .status.saved { color: var(--ink-mute); }
+  .status.error { color: var(--oxblood); font-style: normal; }
+
+  .btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    padding: 8px 14px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn:hover { border-color: var(--ink-mute); background: var(--surface-2); }
+
+  .btn.primary {
+    background: var(--oxblood);
+    color: var(--surface);
+    border-color: var(--oxblood);
+  }
+  .btn.primary:hover { background: var(--oxblood-deep); border-color: var(--oxblood-deep); }
+  .btn.primary.active { background: var(--ink); border-color: var(--ink); }
+
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* === This Sunday card === */
+  .this-sunday {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-md);
+    padding: 0;
+    margin-bottom: 32px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .this-sunday::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 4px;
+    background: var(--lit-color, var(--ink-mute));
+  }
+
+  .this-sunday-inner {
+    padding: 24px 28px 26px 36px;
+  }
+
+  .this-sunday .label {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .this-sunday .label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .this-sunday h2 {
+    margin: 0 0 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+  }
+
+  .this-sunday .date-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+
+  .this-sunday-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 32px;
+    margin-top: 12px;
+  }
+  @media (max-width: 720px) {
+    .this-sunday-grid { grid-template-columns: 1fr; }
+  }
+
+  .this-sunday-grid .field-label {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .this-sunday-grid .field-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    color: var(--ink);
+  }
+
+  /* === Filters === */
+  .filter-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+  }
+
+  .filter-row .label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 600;
+    margin-right: 4px;
+  }
+
+  .chip {
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--ink-mute); color: var(--ink); }
+  .chip.active {
+    background: var(--ink);
+    color: var(--surface);
+    border-color: var(--ink);
+  }
+
+  .search-input {
+    flex: 1;
+    min-width: 180px;
+    border: none;
+    background: transparent;
+    border-bottom: 1px solid var(--line);
+    padding: 5px 4px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-input:focus { border-bottom-color: var(--oxblood); }
+  .search-input::placeholder { color: var(--ink-mute); font-style: italic; }
+
+  /* === Schedule list === */
+  .schedule { display: flex; flex-direction: column; gap: 16px; }
+
+  .season-divider {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 0 4px;
+    margin-top: 8px;
+  }
+  .season-divider:first-child { margin-top: 0; padding-top: 0; }
+
+  .season-divider h3 {
+    margin: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .season-divider .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .season-divider .swatch {
+    width: 10px; height: 10px; border-radius: 2px;
+    background: var(--lit-color, var(--ink-mute));
+  }
+
+  .week {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s;
+    position: relative;
+  }
+  .week:hover { box-shadow: var(--shadow-md); }
+  .week::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--lit-color, var(--ink-mute));
+  }
+  .week.is-past { opacity: 0.66; }
+  .week.is-current { border-color: var(--oxblood); box-shadow: var(--shadow-md); }
+  .week.is-current::before { width: 5px; }
+
+  .week-head {
+    display: grid;
+    grid-template-columns: minmax(140px, 200px) 1fr auto;
+    gap: 18px;
+    padding: 16px 20px 14px 24px;
+    align-items: baseline;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: background 0.15s, border-color 0.2s;
+  }
+  .week-head:hover { background: var(--surface-2); }
+  .week.is-open .week-head { border-bottom-color: var(--line-soft); }
+
+  .week-date {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .week-date .day {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.05;
+  }
+  .week-date .weekday {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 600;
+  }
+
+  .week-service {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .week-service .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .week-service .meta {
+    font-size: 12px;
+    color: var(--ink-mute);
+    letter-spacing: 0.02em;
+  }
+  .week-service .meta strong {
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  .week-toggle {
+    font-size: 18px;
+    color: var(--ink-mute);
+    line-height: 1;
+    transition: transform 0.2s;
+    user-select: none;
+  }
+  .week.is-open .week-toggle { transform: rotate(180deg); }
+
+  /* expanded body */
+  .week-body {
+    display: none;
+    padding: 8px 24px 22px 24px;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 32px;
+  }
+  .week.is-open .week-body { display: grid; }
+  @media (max-width: 720px) {
+    .week.is-open .week-body { grid-template-columns: 1fr; }
+    .week-head { grid-template-columns: 110px 1fr auto; padding-left: 18px; gap: 12px; }
+  }
+
+  .section-block { display: flex; flex-direction: column; gap: 10px; }
+  .section-block.span-2 { grid-column: 1 / -1; }
+
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 600;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .readings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 18px;
+  }
+  @media (max-width: 720px) {
+    .readings-grid { grid-template-columns: 1fr; }
+  }
+  .sermon-passage-wrap .editable { color: var(--oxblood); font-weight: 500; }
+  .sermon-passage-wrap .editable.empty { color: var(--ink-mute); font-weight: 400; }
+
+  .people-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 18px;
+  }
+  .people-grid .field { display: flex; flex-direction: column; gap: 2px; }
+  .field-label-sm {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    font-weight: 600;
+  }
+
+  .songs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 18px;
+  }
+  @media (max-width: 720px) {
+    .people-grid, .songs-grid { grid-template-columns: 1fr; }
+  }
+
+  /* === Suggested Songs (lectionary-themed pool) === */
+  .suggested-block {
+    background: linear-gradient(180deg, rgba(160, 116, 25, 0.045), rgba(160, 116, 25, 0.015));
+    border: 1px solid rgba(160, 116, 25, 0.18);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--r-md);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .suggested-block .section-title {
+    color: var(--gold);
+    border-bottom-color: rgba(160, 116, 25, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .suggested-block .section-title .badge {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    color: var(--ink-mute);
+    margin-left: auto;
+  }
+  .suggested-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    padding-bottom: 2px;
+  }
+  .suggested-songs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .suggested-songs li {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 4px 10px 5px;
+    border-radius: 999px;
+    line-height: 1.2;
+  }
+  .suggested-empty {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-mute);
+  }
+
+  .field-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.3;
+    min-height: 22px;
+  }
+  .field-val.empty::before {
+    content: attr(data-placeholder);
+    color: var(--ink-mute);
+    font-style: italic;
+    font-size: 13px;
+    font-family: 'Source Sans 3', sans-serif;
+  }
+  body.editing .editable.empty::before {
+    content: attr(data-placeholder);
+    color: var(--line);
+    font-style: normal;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+  }
+  .editable:focus::before { content: "" !important; }
+
+  .notes-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    white-space: pre-wrap;
+  }
+
+  /* === Edit mode === */
+  body.editing .editable {
+    border-bottom: 1px dashed var(--line);
+    padding: 1px 2px;
+    transition: background 0.15s;
+    min-height: 22px;
+    display: inline-block;
+    min-width: 60px;
+  }
+  body.editing .editable:hover { background: var(--surface-2); }
+  body.editing .editable:focus {
+    outline: none;
+    background: rgba(160, 116, 25, 0.08);
+    border-bottom-color: var(--gold);
+  }
+  body.editing .week-head { cursor: default; }
+  body.editing .week-toggle { cursor: pointer; }
+
+  body.editing .editable-block {
+    display: block;
+    width: 100%;
+    border: 1px solid transparent;
+    border-radius: var(--r-sm);
+    padding: 6px 8px;
+    margin: -6px -8px;
+  }
+  body.editing .editable-block:hover { border-color: var(--line); background: var(--surface-2); }
+  body.editing .editable-block:focus {
+    outline: none;
+    background: rgba(160, 116, 25, 0.06);
+    border-color: var(--gold);
+  }
+
+  .edit-banner {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, rgba(160, 116, 25, 0.1), rgba(160, 116, 25, 0.04));
+    border: 1px solid var(--gold-soft);
+    border-radius: var(--r-md);
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  body.editing .edit-banner { display: flex; }
+  .edit-banner .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* === Empty state & loading === */
+  .loading {
+    text-align: center;
+    padding: 80px 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--ink-mute);
+    font-size: 18px;
+  }
+
+  /* === Print === */
+  @media print {
+    body { background: white; }
+    .controls, .filter-row, .edit-banner, .week-toggle, .status { display: none !important; }
+    .week-body { display: grid !important; }
+    .week { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    .this-sunday { box-shadow: none; }
+  }
+
+  /* === Misc === */
+  .menu-divider {
+    width: 1px;
+    height: 22px;
+    background: var(--line);
+    margin: 0 4px;
+  }
+
+  /* === Setup modal === */
+  .modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 22, 18, 0.55);
+    z-index: 100;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px 20px;
+    overflow-y: auto;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow-lg);
+    max-width: 720px;
+    width: 100%;
+    padding: 28px 32px 24px;
+    position: relative;
+  }
+  @media (max-width: 600px) { .modal { padding: 22px 20px 20px; } }
+  .modal h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 28px;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+  .modal .modal-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 16px;
+    margin-bottom: 18px;
+  }
+  .modal-close {
+    position: absolute;
+    top: 14px; right: 16px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--ink-mute);
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+  }
+  .modal-close:hover { color: var(--ink); }
+  .steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px;
+  }
+  .steps li {
+    counter-increment: step;
+    position: relative;
+    padding: 10px 0 10px 36px;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0; top: 12px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--oxblood);
+    color: var(--surface);
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .steps li strong { color: var(--ink); font-weight: 600; }
+  .steps li a { color: var(--oxblood); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  .code-block {
+    position: relative;
+    margin: 6px 0;
+  }
+  .code-block textarea {
+    width: 100%;
+    height: 160px;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 11px;
+    line-height: 1.45;
+    padding: 10px 12px;
+    background: #1a1612;
+    color: #d4cab4;
+    border: 1px solid var(--ink);
+    border-radius: var(--r-sm);
+    resize: vertical;
+    white-space: pre;
+    overflow: auto;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 6px; right: 6px;
+    padding: 4px 9px;
+    font-size: 11px;
+    background: rgba(255, 253, 248, 0.1);
+    color: #d4cab4;
+    border: 1px solid rgba(255, 253, 248, 0.2);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .copy-btn:hover { background: rgba(255, 253, 248, 0.2); }
+  .copy-btn.copied { background: var(--gold); color: var(--surface); border-color: var(--gold); }
+  .url-input-row {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0 6px;
+  }
+  .url-input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    font-family: 'SF Mono', monospace;
+    font-size: 12px;
+    background: var(--surface-2);
+    color: var(--ink);
+    outline: none;
+    min-width: 0;
+  }
+  .url-input:focus { border-color: var(--gold); background: var(--surface); }
+  .modal-msg {
+    margin-top: 10px;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: var(--r-sm);
+    display: none;
+  }
+  .modal-msg.show { display: block; }
+  .modal-msg.success { background: rgba(74, 107, 58, 0.1); color: #2d4a22; border: 1px solid rgba(74, 107, 58, 0.3); }
+  .modal-msg.error { background: rgba(110, 26, 31, 0.08); color: var(--oxblood); border: 1px solid rgba(110, 26, 31, 0.25); }
+
+  /* === Connection banner === */
+  .conn-banner {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(110, 26, 31, 0.08), rgba(110, 26, 31, 0.02));
+    border: 1px solid var(--oxblood);
+    border-radius: var(--r-md);
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .conn-banner.show { display: flex; }
+  .conn-banner .icon { color: var(--oxblood); font-size: 18px; }
+  .conn-banner .grow { flex: 1; }
+
+  /* Status colors extension */
+  .status.offline { color: var(--oxblood); font-style: normal; }
+  .status.error { color: var(--oxblood); font-style: normal; }
+
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+
+  .footnote {
+    margin-top: 40px;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--ink-mute);
+    font-size: 15px;
+    letter-spacing: 0.02em;
+  }
+  .footnote::before, .footnote::after { content: "✦"; margin: 0 12px; color: var(--gold-soft); }
+</style>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <div class="brand">
+        <div class="eyebrow">Christ the Redeemer Anglican</div>
+        <h1>Clergy <span class="amp">&amp;</span> Worship Schedule</h1>
+        <div class="subtitle">Anno Domini MMXXVI · Year A → Year B</div>
+      </div>
+      <div class="controls">
+        <span class="status" id="status">saved</span>
+        <button class="btn" id="todayBtn" title="Jump to this Sunday">This Sunday</button>
+        <button class="btn" id="pastToggle" title="Show or hide services from before today">Show past</button>
+        <button class="btn" id="refreshBtn" title="Pull latest from the sheet">↻ Refresh</button>
+        <button class="btn" id="exportBtn" title="Download a JSON backup">Export</button>
+        <button class="btn" id="settingsBtn" title="Google Sheets connection">⚙ Settings</button>
+        <span class="menu-divider"></span>
+        <button class="btn primary" id="editToggle">Edit</button>
+      </div>
+    </header>
+
+    <div class="edit-banner">
+      <span class="dot"></span>
+      <span><strong>Edit mode.</strong> Click any field to change it. Changes save to your Google Sheet — the team sees updates when they refresh.</span>
+    </div>
+
+    <div class="conn-banner" id="connBanner">
+      <span class="icon">⚠</span>
+      <span class="grow"><strong>Not connected to Google Sheets.</strong> Edits won't sync to the team until you set up the connection.</span>
+      <button class="btn primary" id="connBtn">Set up</button>
+    </div>
+
+    <section class="this-sunday" id="thisSundayCard"></section>
+
+    <div class="filter-row">
+      <span class="label">Season</span>
+      <button class="chip active" data-season="all">All</button>
+      <button class="chip" data-season="Epiphany">Epiphany</button>
+      <button class="chip" data-season="Lent">Lent</button>
+      <button class="chip" data-season="Holy Week">Holy Week</button>
+      <button class="chip" data-season="Easter">Easter</button>
+      <button class="chip" data-season="Pentecost">Pentecost</button>
+      <button class="chip" data-season="Ordinary Time">Ordinary</button>
+      <button class="chip" data-season="Advent">Advent</button>
+      <button class="chip" data-season="Christmas">Christmas</button>
+      <input type="search" class="search-input" id="searchInput" placeholder="Search readings, preachers, songs...">
+    </div>
+
+    <div class="schedule" id="schedule">
+      <div class="loading">Drawing up the year's offices…</div>
+    </div>
+
+    <div class="footnote">Soli Deo Gloria</div>
+  </div>
+
+  <!-- Setup Modal -->
+  <div class="modal-backdrop" id="setupModal">
+    <div class="modal">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <h2>Connect to Google Sheets</h2>
+      <div class="modal-subtitle">A one-time setup. Once connected, edits sync to a sheet you control, and the whole team sees the same data.</div>
+
+      <ol class="steps">
+        <li>Open <a href="https://sheets.google.com" target="_blank" rel="noopener">sheets.google.com</a> and create a <strong>blank spreadsheet</strong>. Name it whatever you like (e.g., "CTR Worship Schedule").</li>
+        <li>In your sheet, click <strong>Extensions → Apps Script</strong>. A new tab will open with a code editor.</li>
+        <li>Delete the placeholder <code>function myFunction() {}</code> and paste the code below. Then click the <strong>save icon</strong> (or Ctrl/Cmd-S).
+          <div class="code-block">
+            <button class="copy-btn" id="copyCode">Copy</button>
+            <textarea id="appsScriptCode" readonly spellcheck="false"></textarea>
+          </div>
+        </li>
+        <li>Click <strong>Deploy → New deployment</strong>. Click the gear icon ⚙ next to "Select type" and choose <strong>Web app</strong>.</li>
+        <li>Configure: <strong>Execute as: Me</strong>, <strong>Who has access: Anyone</strong>. Then click <strong>Deploy</strong>.</li>
+        <li>The first time you'll see a permissions prompt. Click <strong>Authorize access</strong>, choose your Google account, click <strong>Advanced → Go to (project name)</strong>, then <strong>Allow</strong>. (Google warns because it's your own script — this is normal.)</li>
+        <li>Copy the <strong>Web app URL</strong> shown (it ends in <code>/exec</code>) and paste it below:
+          <div class="url-input-row">
+            <input type="url" id="apiUrlInput" class="url-input" placeholder="https://script.google.com/macros/s/.../exec" spellcheck="false">
+            <button class="btn primary" id="connectBtn">Connect</button>
+          </div>
+          <div class="modal-msg" id="modalMsg"></div>
+        </li>
+        <li>Once connected, this page will populate the sheet with the default schedule. From then on, every edit syncs automatically. <strong>Share the same HTML file with the team</strong>, and have them paste the same URL on first open (or pre-fill it before sharing — Settings → Connect).</li>
+      </ol>
+    </div>
+  </div>
+
+<script>
+/* =========================================================================
+   DATA — Year A (current liturgical year) populated from project files
+   ========================================================================= */
+
+const SEASON_COLORS = {
+  "Advent": "var(--col-advent)",
+  "Christmas": "var(--col-christmas)",
+  "Epiphany": "var(--col-epiphany)",
+  "Lent": "var(--col-lent)",
+  "Holy Week": "var(--col-holyweek)",
+  "Easter": "var(--col-easter)",
+  "Pentecost": "var(--col-pentecost)",
+  "Ordinary Time": "var(--col-ordinary)",
+  "Feast": "var(--col-feast)",
+  "White": "var(--col-white)"
+};
+
+const ACCLAMATIONS = {
+  "Easter": "Alleluia! Christ is risen. / The Lord is risen indeed. Alleluia!",
+  "Lent": "Bless the Lord who forgives all our sins. / His mercy endures forever.",
+  "Holy Week": "Bless the Lord who forgives all our sins. / His mercy endures forever.",
+  "default": "Blessed be God: Father, Son, and Holy Spirit. / And blessed be his Kingdom, now and for ever. Amen."
+};
+
+function blankWeek(date, service, season, readings = {}, prefill = {}) {
+  return {
+    id: date,
+    date,
+    service,
+    season,
+    readings: {
+      ot: readings.ot || "",
+      psalm: readings.psalm || "",
+      epistle: readings.epistle || "",
+      gospel: readings.gospel || ""
+    },
+    sermonPassage: prefill.sermonPassage || "",
+    preacher: prefill.preacher || "",
+    musicLeader: prefill.musicLeader || "",
+    band: prefill.band || "",
+    openingAcclamation: prefill.openingAcclamation || ACCLAMATIONS[season] || ACCLAMATIONS.default,
+    songs: {
+      entrance: prefill.songs?.entrance || "",
+      song2: prefill.songs?.song2 || "",
+      song3: prefill.songs?.song3 || "",
+      communion: prefill.songs?.communion || "",
+      ending: prefill.songs?.ending || ""
+    },
+    notes: prefill.notes || ""
+  };
+}
+
+/* Seeded from your CTR Worship Service Info sheet + ACNA Lectionary */
+const DEFAULT_WEEKS = [
+  blankWeek("2026-01-04", "The Second Sunday after Christmas", "Christmas",
+    { ot: "Jer 31:7-14", psalm: "Ps 84", epistle: "Eph 1:3-14", gospel: "Luke 2:41-52" },
+    { sermonPassage: "Luke 2:41-52", preacher: "Luke", musicLeader: "Peter", band: "Josiah, Seth" }),
+
+  blankWeek("2026-01-06", "The Epiphany of Our Lord Jesus Christ", "Epiphany",
+    { ot: "Isa 60:1-9", psalm: "Ps 72 or 72:1-11", epistle: "Eph 3:1-13", gospel: "Matt 2:1-12" }),
+
+  blankWeek("2026-01-11", "First Sunday of Epiphany — Baptism of Our Lord", "Epiphany",
+    { ot: "Isa 42:1-9", psalm: "Ps 89:1-29 or 89:20-29", epistle: "Acts 10:34-38", gospel: "Matt 3:13-17" },
+    { sermonPassage: "The King Revealed: The Identity of the King", preacher: "Luke", musicLeader: "Peter", band: "Aiden, Christian, Emily" }),
+
+  blankWeek("2026-01-18", "The Second Sunday of Epiphany", "Epiphany",
+    { ot: "Ex 12:21-28", psalm: "Ps 40:1-11", epistle: "1 Cor 1:1-9", gospel: "John 1:29-42" },
+    { sermonPassage: "Eph 1:3-14; Ps 40:1-11; John 6:35-40", preacher: "Randy Forester", musicLeader: "Peter", band: "Dustin, Christian, Will, Christine" }),
+
+  blankWeek("2026-01-25", "The Third Sunday of Epiphany", "Epiphany",
+    { ot: "Amos 3:1-11", psalm: "Ps 139:1-18", epistle: "1 Cor 1:10-17", gospel: "Matt 4:12-22" },
+    { preacher: "Luke" }),
+
+  blankWeek("2026-02-01", "The Fourth Sunday of Epiphany", "Epiphany",
+    { ot: "Mic 6:1-8", psalm: "Ps 37:1-11", epistle: "1 Cor 1:18-31", gospel: "Matt 5:1-12" },
+    { sermonPassage: "The King Revealed: The Call of the King", preacher: "Luke" }),
+
+  blankWeek("2026-02-08", "World Mission / Second to Last Sunday of Epiphany", "Epiphany",
+    { ot: "Isa 49:1-7", psalm: "Ps 67", epistle: "Acts 1:1-8", gospel: "Matt 9:35-38" },
+    { sermonPassage: "The King Revealed: The Law of the King — Mic 6:1-8; Ps 37:1-11; Matt 5:1-12", preacher: "Luke", musicLeader: "Peter", band: "Chris, Emily, Josiah" }),
+
+  blankWeek("2026-02-15", "Transfiguration — Last Sunday of Epiphany", "Epiphany",
+    { ot: "Ex 24:12-18", psalm: "Ps 99", epistle: "Phil 3:7-14", gospel: "Matt 17:1-9" },
+    { sermonPassage: "The King Revealed: The Glory of the King", preacher: "Luke", musicLeader: "Peter", band: "Ingrid, Chris, Ty, Christine" }),
+
+  blankWeek("2026-02-18", "Ash Wednesday", "Lent",
+    { ot: "Joel 2:1-2, 12-17 or Isa 58:1-12", psalm: "Ps 103 or 103:8-14", epistle: "2 Cor 5:20—6:10", gospel: "Matt 6:1-6, 16-21" },
+    { preacher: "Luke", musicLeader: "Peter" }),
+
+  blankWeek("2026-02-22", "The First Sunday in Lent", "Lent",
+    { ot: "Gen 2:4-9, 15-17, 25—3:7", psalm: "Ps 51 or Ps 51:1-12", epistle: "Rom 5:12-21", gospel: "Matt 4:1-11" },
+    { preacher: "Luke" }),
+
+  blankWeek("2026-03-01", "The Second Sunday in Lent", "Lent",
+    { ot: "Gen 12:1-9", psalm: "Ps 33:12-21", epistle: "Rom 4:1-5(6-12)13-17", gospel: "John 3:1-16" },
+    { sermonPassage: "The King Revealed: The Mission of the King — Rev 7:1-12; Ps 67; Matt 5:43-48, 6:19-21", preacher: "Peter", musicLeader: "Ashley", band: "Seth, Theo" }),
+
+  blankWeek("2026-03-08", "The Third Sunday in Lent", "Lent",
+    { ot: "Ex 17:1-7", psalm: "Ps 95", epistle: "Rom 1:16-32", gospel: "John 4:5-26(27-38) 39-42" },
+    { sermonPassage: "Ps 33:12-21; Rom 4:1-5(6-12)13-17; John 3:1-16", preacher: "Theo", musicLeader: "Peter" }),
+
+  blankWeek("2026-03-15", "The Fourth Sunday in Lent", "Lent",
+    { ot: "1 Sam 16:1-13", psalm: "Ps 23", epistle: "Eph 5:1-14", gospel: "John 9:1-13, 28-38 (39-41)" },
+    { sermonPassage: "Ps 95; Rom 1:16-32; John 4:5-26(27-38) 39-42", preacher: "Luke", musicLeader: "Peter", band: "Christian, Dustin" }),
+
+  blankWeek("2026-03-22", "Passion Sunday — The Fifth Sunday in Lent", "Lent",
+    { ot: "Ezek 37:1-14", psalm: "Ps 130", epistle: "Rom 6:15-23", gospel: "John 11:(1-17)18-44" },
+    { sermonPassage: "1 Sam 16:1-13; Ps 23; John 9:1-13, 28-38 (39-41)", preacher: "Luke", musicLeader: "Peter" }),
+
+  blankWeek("2026-03-25", "The Annunciation", "Feast",
+    { ot: "Isa 7:10-14", psalm: "Ps 40:1-11 or Magnificat", epistle: "Heb 10:5-10", gospel: "Luke 1:26-38" }),
+
+  blankWeek("2026-03-29", "Palm Sunday", "Holy Week",
+    { ot: "Isa 52:13—53:12", psalm: "Ps 22:1-21; or Ps 22:1-11", epistle: "Phil 2:5-11", gospel: "Matt (26:36-75) 27:1-54 (55-66)" },
+    { preacher: "Theo", musicLeader: "Peter" }),
+
+  blankWeek("2026-04-02", "Maundy Thursday", "Holy Week",
+    { ot: "Ex 12:1-14", psalm: "Ps 78:15-26", epistle: "1 Cor 11:23-26(27-34)", gospel: "John 13:1-15 or Luke 22:14-30" },
+    { sermonPassage: "1 Cor 11:23-26; John 13:1-15", preacher: "John", musicLeader: "Peter" }),
+
+  blankWeek("2026-04-03", "Good Friday", "Holy Week",
+    { ot: "Gen 22:1-18 or Isa 52:13—53:12", psalm: "Ps 22:1-11(12-21) or Ps 40:1-16 or Ps 69:1-22", epistle: "Heb 10:1-25", gospel: "John (18:1-40) 19:1-37" },
+    { sermonPassage: "Isa 52:13—53:12; Heb 10:1-25", preacher: "Luke", musicLeader: "Peter", band: "Theo" }),
+
+  blankWeek("2026-04-05", "Easter Day — Principal Service", "Easter",
+    { ot: "Acts 10:34-43 or Ex 14:10-14,21-31", psalm: "Ps 118:14-17,22-24", epistle: "Col 3:1-4 or Acts 10:34-43", gospel: "John 20:1-10(11-18) or Matt 28:1-10" },
+    { sermonPassage: "Ex 14:10-14,21-31; Ps 118:14-17,22-24; John 20:1-18", preacher: "Luke", musicLeader: "Peter", band: "Ingrid, Sean, Seth, Ashley, Emily" }),
+
+  blankWeek("2026-04-12", "The Second Sunday of Easter", "Easter",
+    { ot: "Acts 2:14a,22-32 or Gen 8:6-16, 9:8-16", psalm: "Ps 111", epistle: "1 Pet 1:3-9", gospel: "John 20:19-31" },
+    { sermonPassage: "1 Pet 1:3-9; Ps 111; John 20:19-31", preacher: "Theo", musicLeader: "Peter", band: "Christian, Will" }),
+
+  blankWeek("2026-04-19", "The Third Sunday of Easter", "Easter",
+    { ot: "Acts 2:14a,36-47 or Isa 43:1-12", psalm: "Ps 116:11-16", epistle: "1 Pet 1:13-25", gospel: "Luke 24:13-35" },
+    { sermonPassage: "Ps 116:11-16; 1 Pet 1:13-25; Luke 24:13-35", preacher: "Luke", musicLeader: "Peter", band: "Seth, Will" }),
+
+  blankWeek("2026-04-26", "The Fourth Sunday of Easter — Good Shepherd", "Easter",
+    { ot: "Acts 6:1-9, 7:2a,51-60 or Neh 9:(1-3)6-15", psalm: "Ps 23", epistle: "1 Pet 2:13-25", gospel: "John 10:1-10" },
+    { sermonPassage: "Ps 23; 1 Pet 2:13-25; John 10:1-10", preacher: "Luke", musicLeader: "Peter", band: "Chris, Aiden, Josiah" }),
+
+  blankWeek("2026-05-03", "The Fifth Sunday of Easter", "Easter",
+    { ot: "Acts 17:1-15 or Deut 6:20-25", psalm: "Ps 66:1-11 or 66:1-8", epistle: "1 Pet 2:1-12", gospel: "John 14:1-14" },
+    { sermonPassage: "Ps 66:1-12; 1 Pet 2:1-12; John 14:1-14", preacher: "Luke", musicLeader: "Peter", band: "Chris, Dustin" }),
+
+  blankWeek("2026-05-10", "The Sixth Sunday of Easter — Rogation Sunday", "Easter",
+    { ot: "Acts 17:(16-21)22-34 or Isa 41:17-20", psalm: "Ps 148 or 148:7-14", epistle: "1 Pet 3:8-18", gospel: "John 15:1-11" },
+    { sermonPassage: "Ps 148; 1 Pet 3:8-18; John 15:1-11", preacher: "Theo", musicLeader: "Peter", band: "Josiah" }),
+
+  blankWeek("2026-05-14", "Ascension Day", "Easter",
+    { ot: "Acts 1:1-11", psalm: "Ps 47 or 110:1-5", epistle: "Eph 1:15-23", gospel: "Luke 24:44-53 or Mark 16:9-20" }),
+
+  blankWeek("2026-05-17", "The Sunday after Ascension Day", "Easter",
+    { ot: "Acts 1:(1-5)6-14 or Ezek 39:21-29", psalm: "Ps 68:1-20 or 47", epistle: "1 Pet 4:12-19", gospel: "John 17:1-11" },
+    { sermonPassage: "Acts 1:1-11; Ps 110:1-7; Luke 24:44-53", preacher: "Luke", musicLeader: "Peter", band: "Seth, Laura" }),
+
+  blankWeek("2026-05-24", "The Day of Pentecost", "Pentecost",
+    { ot: "Gen 11:1-9 or Acts 2:1-11(12-21)", psalm: "Ps 104:24-35", epistle: "Acts 2:1-11(12-21) or 1 Cor 12:4-13", gospel: "John 14:8-17" },
+    { sermonPassage: "Ps 104:24-35; Acts 2:1-11; John 14:8-17", preacher: "Luke", musicLeader: "Peter", band: "Josiah" }),
+
+  blankWeek("2026-05-31", "Trinity Sunday", "Ordinary Time",
+    { ot: "Gen 1:1—2:3", psalm: "Ps 150", epistle: "2 Cor 13:5-14", gospel: "Matt 28:16-20" },
+    { sermonPassage: "Gen 1:1-2:3; Ps 150; 2 Cor 13:5-14; Matt 28:16-20", preacher: "Theo", musicLeader: "Peter" }),
+
+  blankWeek("2026-06-07", "Proper 5", "Ordinary Time",
+    { ot: "Hos 5:15—6:6", psalm: "Ps 50", epistle: "Rom 4:13-18", gospel: "Matt 9:9-13" },
+    { sermonPassage: "Ps 50; Rom 4:13-18; Matt 9:9-13", preacher: "Tim R.", musicLeader: "Peter" }),
+
+  blankWeek("2026-06-14", "Proper 6", "Ordinary Time",
+    { ot: "Ex 19:1-8", psalm: "Ps 100", epistle: "Rom 5:1-11", gospel: "Matt 9:35—10:15" },
+    { musicLeader: "Peter" }),
+
+  blankWeek("2026-06-21", "Proper 7", "Ordinary Time",
+    { ot: "Jer 20:7-13", psalm: "Ps 69:1-15(16-18)", epistle: "Rom 5:15b-19", gospel: "Matt 10:16-33" },
+    { musicLeader: "Peter" }),
+
+  blankWeek("2026-06-28", "Proper 8", "Ordinary Time",
+    { ot: "Isa 2:10-17", psalm: "Ps 89:1-18", epistle: "Rom 6:1-11", gospel: "Matt 10:34-42" },
+    { musicLeader: "Peter" }),
+
+  blankWeek("2026-07-05", "Proper 9", "Ordinary Time",
+    { ot: "Zech 9:9-12", psalm: "Ps 145:1-13(14-21)", epistle: "Rom 7:21—8:6", gospel: "Matt 11:25-30" },
+    { musicLeader: "Peter" }),
+
+  blankWeek("2026-07-12", "Proper 10", "Ordinary Time",
+    { ot: "Isa 55", psalm: "Ps 65", epistle: "Rom 8:7-17", gospel: "Matt 13:1-9,18-23" },
+    { musicLeader: "Peter" }),
+
+  blankWeek("2026-07-19", "Proper 11", "Ordinary Time",
+    { ot: "Wisdom 12:13, 16-19", psalm: "Ps 86", epistle: "Rom 8:18-25", gospel: "Matt 13:24-30,34-43" },
+    { musicLeader: "Peter" }),
+
+  blankWeek("2026-07-26", "Proper 12", "Ordinary Time",
+    { ot: "1 Kings 3:3-14", psalm: "Ps 119:121-136", epistle: "Rom 8:26-34", gospel: "Matt 13:31-33,44-50" },
+    { preacher: "Zach Slagel", musicLeader: "Theo", notes: "Peter on vacation" }),
+
+  blankWeek("2026-08-02", "Proper 13", "Ordinary Time",
+    { ot: "Neh 9:16-21", psalm: "Ps 78:(1-13)14-26", epistle: "Rom 8:35-39", gospel: "Matt 14:13-21" },
+    { musicLeader: "Ashley", notes: "Peter on vacation" }),
+
+  blankWeek("2026-08-06", "The Transfiguration", "Feast",
+    { ot: "Ex 34:29-35", psalm: "Ps 99", epistle: "2 Pet 1:13-21", gospel: "Luke 9:28-36" }),
+
+  blankWeek("2026-08-09", "Proper 14", "Ordinary Time",
+    { ot: "Jon 2:1-10", psalm: "Ps 29", epistle: "Rom 9:1-5", gospel: "Matt 14:22-33" }),
+
+  blankWeek("2026-08-16", "Proper 15", "Ordinary Time",
+    { ot: "Isa 56:1-8", psalm: "Ps 67", epistle: "Rom 11:13-24", gospel: "Matt 15:21-28" }),
+
+  blankWeek("2026-08-23", "Proper 16", "Ordinary Time",
+    { ot: "Isa 51:1-6", psalm: "Ps 138", epistle: "Rom 11:25-36", gospel: "Matt 16:13-20" },
+    { notes: "Luke is at Gathering" }),
+
+  blankWeek("2026-08-30", "Proper 17", "Ordinary Time",
+    { ot: "Jer 15:15-21", psalm: "Ps 26", epistle: "Rom 12:1-8", gospel: "Matt 16:21-27" }),
+
+  blankWeek("2026-09-06", "Proper 18", "Ordinary Time",
+    { ot: "Ezek 33:1-11", psalm: "Ps 119:33-48", epistle: "Rom 12:9-21", gospel: "Matt 18:15-20" }),
+
+  blankWeek("2026-09-13", "Proper 19", "Ordinary Time",
+    { ot: "Ecclesiasticus 27:30—28:7", psalm: "Ps 103 or 103:1-14", epistle: "Rom 14:5-12", gospel: "Matt 18:21-35" }),
+
+  blankWeek("2026-09-20", "Proper 20", "Ordinary Time",
+    { ot: "Jonah 3:10—4:11", psalm: "Ps 145:(1-13)14-21", epistle: "Phil 1:21-27", gospel: "Matt 20:1-16" }),
+
+  blankWeek("2026-09-27", "Proper 21", "Ordinary Time",
+    { ot: "Ezek 18:1-4,25-32", psalm: "Ps 25:1-14(15-21)", epistle: "Phil 2:1-13", gospel: "Matt 21:28-32" }),
+
+  blankWeek("2026-10-04", "Proper 22", "Ordinary Time",
+    { ot: "Isa 5:1-7", psalm: "Ps 80:(1-6)7-19", epistle: "Phil 3:14-21", gospel: "Matt 21:33-44" }),
+
+  blankWeek("2026-10-11", "Proper 23", "Ordinary Time",
+    { ot: "Isa 25:1-9", psalm: "Ps 23", epistle: "Phil 4:4-13", gospel: "Matt 22:1-14" }),
+
+  blankWeek("2026-10-18", "Proper 24", "Ordinary Time",
+    { ot: "Mal 3:6-12", psalm: "Ps 96", epistle: "1 Thess 1:1-10", gospel: "Matt 22:15-22" }),
+
+  blankWeek("2026-10-25", "Proper 25", "Ordinary Time",
+    { ot: "Ex 22:21-27", psalm: "Ps 1", epistle: "1 Thess 2:1-8", gospel: "Matt 22:34-46" }),
+
+  blankWeek("2026-11-01", "All Saints' Day", "Feast",
+    { ot: "Ecclesiasticus 44:1-14 or Rev 7:9-17", psalm: "Ps 149", epistle: "Rev 7:9-17 or Eph 1:(11-14)15-23", gospel: "Matt 5:1-12 or Luke 6:20-26(27-36)" }),
+
+  blankWeek("2026-11-08", "Proper 27", "Ordinary Time",
+    { ot: "Amos 5:18-24", psalm: "Ps 70", epistle: "1 Thess 4:13-18", gospel: "Matt 25:1-13" }),
+
+  blankWeek("2026-11-15", "Proper 28", "Ordinary Time",
+    { ot: "Zeph 1:7,12-18", psalm: "Ps 90:1-12(13-17)", epistle: "1 Thess 5:1-10", gospel: "Matt 25:14-30" }),
+
+  blankWeek("2026-11-22", "Christ the King — Proper 29", "Ordinary Time",
+    { ot: "Ezek 34:11-20", psalm: "Ps 95", epistle: "1 Cor 15:20-28", gospel: "Matt 25:31-46" }),
+
+  blankWeek("2026-11-26", "Thanksgiving (USA)", "Feast",
+    { ot: "Deut 8", psalm: "Ps 65:1-8(9-14)", epistle: "James 1:17-27", gospel: "Matt 6:25-33" }),
+
+  /* Advent 2026 begins Year B */
+  blankWeek("2026-11-29", "The First Sunday in Advent (Year B)", "Advent",
+    { ot: "Isa 64:1-9a", psalm: "Ps 80 or 80:1-7", epistle: "1 Cor 1:1-9", gospel: "Mark 13:24-37" }),
+
+  blankWeek("2026-12-06", "The Second Sunday in Advent", "Advent",
+    { ot: "Isa 40:1-11", psalm: "Ps 85", epistle: "2 Pet 3:8-18", gospel: "Mark 1:1-8" }),
+
+  blankWeek("2026-12-13", "The Third Sunday in Advent", "Advent",
+    { ot: "Isa 65:17-25", psalm: "Ps 126", epistle: "1 Thess 5:12-28", gospel: "John 3:22-30 or John 1:19-28" }),
+
+  blankWeek("2026-12-20", "The Fourth Sunday in Advent", "Advent",
+    { ot: "2 Sam 7:1-17", psalm: "Ps 132:(1-7) 8-19", epistle: "Rom 16:25-27", gospel: "Luke 1:26-38" }),
+
+  blankWeek("2026-12-24", "Christmas Eve", "Christmas",
+    { ot: "Isa 9:1-7", psalm: "Ps 96", epistle: "Titus 2:11-14", gospel: "Luke 2:1-14(15-20)" }),
+
+  blankWeek("2026-12-25", "The Nativity of Our Lord — Christmas Day", "Christmas",
+    { ot: "Isa 52:7-12", psalm: "Ps 98", epistle: "Heb 1:1-12", gospel: "John 1:1-18" }),
+
+  blankWeek("2026-12-27", "The First Sunday after Christmas", "Christmas",
+    { ot: "Isa 61:10—62:5", psalm: "Ps 147:12-20", epistle: "Gal 3:23—4:7", gospel: "John 1:1-18" }),
+];
+
+/* =========================================================================
+   SUGGESTED SONGS
+   Drawn from CTR's song bank (hymns + contemporary).
+   Themes pulled from the day's lectionary readings and season.
+   Notes give a short rationale per service.
+   ========================================================================= */
+const SUGGESTED_SONGS = {
+  "2026-05-24": { // Pentecost — Acts 2, John 14:8-17, Ps 104
+    note: "Holy Spirit's coming; gift of the Spirit; Christ's promise of the Paraclete.",
+    songs: [
+      "Holy Spirit (Bryan & Katie Torwalt)",
+      "Spirit of the Living God",
+      "Breathe On Me Breath of God",
+      "Come Holy Ghost / For Your Gift of God the Spirit",
+      "Trinity Song",
+      "Spirit Break Out",
+      "Rest On Us",
+      "All Creatures of Our God and King"
+    ]
+  },
+  "2026-05-31": { // Trinity Sunday — Gen 1, Ps 150, 2 Cor 13, Matt 28
+    note: "Triune God; creation; the Great Commission; doxological praise.",
+    songs: [
+      "Holy, Holy, Holy",
+      "Trinity Song",
+      "All Creatures of Our God and King",
+      "Holy Forever",
+      "Come Thou Almighty King",
+      "Doxology",
+      "Be Enthroned",
+      "Praise to the Lord, the Almighty"
+    ]
+  },
+  "2026-06-07": { // Proper 5 — Hos 6, Matt 9:9-13 (call of Matthew)
+    note: "Mercy not sacrifice; calling of sinners; faith of Abraham.",
+    songs: [
+      "Come As You Are",
+      "Lord I Need You",
+      "His Mercy is More",
+      "Jesus I Come (Out of My Bondage)",
+      "All I Have is Christ",
+      "Amazing Grace (My Chains Are Gone)",
+      "And Can It Be",
+      "Goodness of God"
+    ]
+  },
+  "2026-06-14": { // Proper 6 — Ex 19 (Sinai), Ps 100, Rom 5:1-11, Matt 9:35-10:15
+    note: "Covenant at Sinai; peace through justification; sending of the twelve.",
+    songs: [
+      "Be Thou My Vision",
+      "In Christ Alone",
+      "And Can It Be",
+      "Mighty to Save",
+      "Build Your Kingdom Here",
+      "Praise to the Lord, the Almighty",
+      "Build My Life",
+      "Speak O Lord"
+    ]
+  },
+  "2026-06-21": { // Proper 7 — Jer 20, Ps 69, Rom 5:15, Matt 10:16-33
+    note: "Fearless witness; God's care in trial; sparrows and value before the Father.",
+    songs: [
+      "Whom Shall I Fear (God of Angel Armies)",
+      "Fear Not For I Am With You",
+      "A Mighty Fortress is Our God",
+      "He Will Hold Me Fast",
+      "Yet Not I, But Through Christ in Me",
+      "It Is Well With My Soul",
+      "Blessed Be Your Name",
+      "How Firm a Foundation"
+    ]
+  },
+  "2026-06-28": { // Proper 8 — Isa 2, Ps 89, Rom 6:1-11, Matt 10:34-42
+    note: "Dead to sin, alive in Christ; baptismal identity; take up the cross.",
+    songs: [
+      "No Longer Slaves",
+      "All I Have is Christ",
+      "In Christ Alone",
+      "Yet Not I, But Through Christ in Me",
+      "When I Survey the Wondrous Cross",
+      "The Wonderful Cross",
+      "Be Thou My Vision",
+      "I Surrender All"
+    ]
+  },
+  "2026-07-05": { // Proper 9 — Zech 9 (humble king), Matt 11:25-30 (come to me)
+    note: "Humble King on a donkey; rest for the weary; gentle and lowly.",
+    songs: [
+      "Come As You Are",
+      "Come to the Feast",
+      "Lord I Need You",
+      "Rest (Jenna)",
+      "Hosanna (Praise is Rising)",
+      "How Deep the Father's Love For Us",
+      "Yet Not I, But Through Christ in Me",
+      "All I Have is Christ"
+    ]
+  },
+  "2026-07-12": { // Proper 10 — Isa 55 (come buy), Ps 65, Rom 8:7-17, Matt 13:1-9 (sower)
+    note: "Free gift of God; the Word like seed and rain; life in the Spirit.",
+    songs: [
+      "Come to the Feast",
+      "All Who Are Thirsty",
+      "Speak O Lord",
+      "Word of God Speak",
+      "Goodness of the Lord",
+      "Build Your Kingdom Here",
+      "No Longer Slaves",
+      "Move In Us (Jenna)"
+    ]
+  },
+  "2026-07-19": { // Proper 11 — Wisdom 12, Ps 86, Rom 8:18-25, Matt 13:24-30 (wheat & tares)
+    note: "God's patience and mercy; groaning creation awaiting glory; wheat and tares.",
+    songs: [
+      "Soon",
+      "We Will Feast in the House of Zion",
+      "Living Hope",
+      "I Am Making All Things New",
+      "His Mercy is More",
+      "Goodness of God",
+      "Promises",
+      "Be Thou My Vision"
+    ]
+  },
+  "2026-07-26": { // Proper 12 — 1 Kings 3 (Solomon), Ps 119, Rom 8:26-34, Matt 13:31-33,44-50
+    note: "Kingdom small but growing; hidden treasure; Spirit intercedes for us.",
+    songs: [
+      "Build Your Kingdom Here",
+      "Be Thou My Vision",
+      "All I Have is Christ",
+      "My Worth is Not in What I Own",
+      "Build My Life",
+      "King of Kings",
+      "Cornerstone",
+      "Take My Life"
+    ]
+  },
+  "2026-08-02": { // Proper 13 — Neh 9, Ps 78, Rom 8:35-39 (nothing separates), Matt 14:13-21 (feeding 5000)
+    note: "God's faithful provision; nothing separates us from his love; feeding multitudes.",
+    songs: [
+      "Goodness of God",
+      "Great is Thy Faithfulness",
+      "Goodness of the Lord",
+      "Come to the Feast",
+      "How Deep the Father's Love For Us",
+      "Promises",
+      "Yet Not I, But Through Christ in Me",
+      "In Christ Alone"
+    ]
+  },
+  "2026-08-06": { // Transfiguration — Ex 34, Ps 99, 2 Pet 1, Luke 9:28-36
+    note: "Glory of Christ revealed; Moses' shining face; majesty witnessed.",
+    songs: [
+      "Holy Forever",
+      "Holy, Holy, Holy",
+      "Behold Our God",
+      "What A Beautiful Name",
+      "Open the Eyes of My Heart",
+      "O Praise The Name (Anástasis)",
+      "Crown Him With Many Crowns",
+      "King of Kings"
+    ]
+  },
+  "2026-08-09": { // Proper 14 — Jon 2 (depths), Ps 29 (voice over waters), Matt 14:22-33 (walking on water)
+    note: "Salvation from the depths; Christ's voice over the storm; faltering faith.",
+    songs: [
+      "Mighty to Save",
+      "Cornerstone",
+      "A Mighty Fortress is Our God",
+      "Jesus I Come (Out of My Bondage)",
+      "Whom Shall I Fear (God of Angel Armies)",
+      "Living Hope",
+      "Blessed Be Your Name",
+      "In Christ Alone"
+    ]
+  },
+  "2026-08-16": { // Proper 15 — Isa 56 (house for all nations), Ps 67, Matt 15:21-28 (Canaanite woman)
+    note: "Gospel to the nations; persistent faith of the outsider; gentile inclusion.",
+    songs: [
+      "All the Poor and Powerless",
+      "Build Your Kingdom Here",
+      "Days of Elijah",
+      "The Blessing",
+      "How Great is Our God",
+      "Speak Jesus",
+      "Hosanna (Praise is Rising)",
+      "Lord I Need You"
+    ]
+  },
+  "2026-08-23": { // Proper 16 — Isa 51 (look to the rock), Ps 138, Matt 16:13-20 (Peter's confession)
+    note: "Christ the Rock; Peter's confession; Church built on the apostolic faith.",
+    songs: [
+      "Cornerstone",
+      "Rock of Ages (James Ward)",
+      "The Church's One Foundation",
+      "In Christ Alone",
+      "What A Beautiful Name",
+      "King of Kings",
+      "Build My Life",
+      "Behold Our God"
+    ]
+  },
+  "2026-08-30": { // Proper 17 — Jer 15, Ps 26, Rom 12:1-8 (living sacrifice), Matt 16:21-27 (take up cross)
+    note: "Living sacrifices; lose your life to find it; transformed by renewing of mind.",
+    songs: [
+      "I Surrender All",
+      "Take My Life",
+      "The Wonderful Cross",
+      "All I Have is Christ",
+      "Yet Not I, But Through Christ in Me",
+      "When I Survey the Wondrous Cross",
+      "Be Thou My Vision",
+      "Move In Us (Jenna)"
+    ]
+  },
+  "2026-09-06": { // Proper 18 — Ezek 33 (watchman), Ps 119:33-48, Rom 12:9-21 (love), Matt 18:15-20 (church)
+    note: "Love sincerely; gathered in his name; teach me your statutes.",
+    songs: [
+      "The Church's One Foundation",
+      "Be Thou My Vision",
+      "Build My Life",
+      "Lord I Need You",
+      "Speak O Lord",
+      "Yet Not I, But Through Christ in Me",
+      "Goodness of God",
+      "How Deep the Father's Love For Us"
+    ]
+  },
+  "2026-09-13": { // Proper 19 — Ecclus 27-28, Ps 103 (mercy), Matt 18:21-35 (unforgiving servant)
+    note: "Forgive as you have been forgiven; abundant mercy; slow to anger.",
+    songs: [
+      "His Mercy is More",
+      "Lord I Need You",
+      "Amazing Grace (My Chains Are Gone)",
+      "Come As You Are",
+      "Jesus I Come (Out of My Bondage)",
+      "How Deep the Father's Love For Us",
+      "Goodness of God",
+      "In Christ Alone"
+    ]
+  },
+  "2026-09-20": { // Proper 20 — Jonah 4 (mercy on Nineveh), Ps 145, Phil 1, Matt 20:1-16 (laborers in vineyard)
+    note: "God's scandalous generosity; the last shall be first; to live is Christ.",
+    songs: [
+      "Amazing Grace (My Chains Are Gone)",
+      "His Mercy is More",
+      "Goodness of God",
+      "The Year of His Favor",
+      "All I Have is Christ",
+      "Come As You Are",
+      "Yet Not I, But Through Christ in Me",
+      "Cornerstone"
+    ]
+  },
+  "2026-09-27": { // Proper 21 — Ezek 18 (new heart), Ps 25, Phil 2 (humility of Christ), Matt 21:28-32
+    note: "Christ's humility; obedience over words; teach me your ways.",
+    songs: [
+      "Hosanna (Praise is Rising)",
+      "All I Have is Christ",
+      "In Christ Alone",
+      "Behold the Lamb",
+      "Lord I Need You",
+      "Build My Life",
+      "Yet Not I, But Through Christ in Me",
+      "Come As You Are"
+    ]
+  },
+  "2026-10-04": { // Proper 22 — Isa 5 (vineyard), Ps 80, Phil 3 (press on), Matt 21:33-44 (wicked tenants, cornerstone)
+    note: "Christ the rejected cornerstone; press on toward the goal; restore us.",
+    songs: [
+      "Cornerstone",
+      "In Christ Alone",
+      "Be Thou My Vision",
+      "Build My Life",
+      "All I Have is Christ",
+      "My Worth is Not in What I Own",
+      "Soon",
+      "Yet Not I, But Through Christ in Me"
+    ]
+  },
+  "2026-10-11": { // Proper 23 — Isa 25 (mountain feast), Ps 23, Phil 4 (peace), Matt 22:1-14 (wedding feast)
+    note: "Mountain feast; eschatological banquet; Shepherd's care; peace of God.",
+    songs: [
+      "We Will Feast in the House of Zion",
+      "Come to the Feast",
+      "Psalm 23 (As the Deer)",
+      "Goodness of God",
+      "Soon",
+      "Living Hope",
+      "Be Thou My Vision",
+      "In Christ Alone"
+    ]
+  },
+  "2026-10-18": { // Proper 24 — Mal 3 (tithe), Ps 96 (new song), 1 Thess 1, Matt 22:15-22 (render to Caesar)
+    note: "Stewardship; sing a new song; faith, hope, love; what bears Christ's image.",
+    songs: [
+      "All I Have is Christ",
+      "Take My Life",
+      "Build My Life",
+      "King of Kings",
+      "In Christ Alone",
+      "Holy Forever",
+      "Goodness of God",
+      "My Worth is Not in What I Own"
+    ]
+  },
+  "2026-10-25": { // Proper 25 — Ex 22 (justice for sojourner), Ps 1, 1 Thess 2, Matt 22:34-46 (great commandment)
+    note: "Love God and neighbor; way of the righteous; justice for the vulnerable.",
+    songs: [
+      "Build My Life",
+      "The Heart of Worship",
+      "All I Have is Christ",
+      "Be Thou My Vision",
+      "Move In Us (Jenna)",
+      "How Deep the Father's Love For Us",
+      "Speak Jesus",
+      "In Christ Alone"
+    ]
+  },
+  "2026-11-01": { // All Saints' Day — Rev 7, Ps 149, Eph 1, Matt 5 (Beatitudes)
+    note: "Communion of saints; great multitude; the saints in light; Beatitudes.",
+    songs: [
+      "For All the Saints",
+      "The Church's One Foundation",
+      "When We All Get to Heaven",
+      "We Will Feast in the House of Zion",
+      "Holy Forever",
+      "Crown Him With Many Crowns",
+      "Is He Worthy",
+      "O Praise The Name (Anástasis)"
+    ]
+  },
+  "2026-11-08": { // Proper 27 — Amos 5, Ps 70, 1 Thess 4 (resurrection), Matt 25:1-13 (wise/foolish virgins)
+    note: "Christ's return; watchfulness; resurrection of the dead; oil and lamps.",
+    songs: [
+      "Even So Come",
+      "Soon and Very Soon",
+      "Soon",
+      "Living Hope",
+      "We Will Feast in the House of Zion",
+      "Days of Elijah",
+      "In Christ Alone",
+      "My Worth is Not in What I Own"
+    ]
+  },
+  "2026-11-15": { // Proper 28 — Zeph 1, Ps 90, 1 Thess 5 (day of Lord), Matt 25:14-30 (talents)
+    note: "Day of the Lord; teach us to number our days; children of light; faithfulness.",
+    songs: [
+      "All I Have is Christ",
+      "Build My Life",
+      "My Worth is Not in What I Own",
+      "Take My Life",
+      "Be Thou My Vision",
+      "Even So Come",
+      "Goodness of God",
+      "In Christ Alone"
+    ]
+  },
+  "2026-11-22": { // Christ the King — Ezek 34, Ps 95, 1 Cor 15, Matt 25:31-46 (sheep & goats)
+    note: "Christ's universal kingship; the Shepherd-King; final judgment; reign of Christ.",
+    songs: [
+      "King of Kings",
+      "Crown Him With Many Crowns",
+      "All Hail the Power of Jesus' Name",
+      "Crown Him (Majesty)",
+      "Rejoice the Lord is King",
+      "Lead On O King Eternal",
+      "Behold Our God",
+      "Be Enthroned"
+    ]
+  },
+  "2026-11-26": { // Thanksgiving USA — Deut 8, Ps 65, James 1:17, Matt 6:25-33 (do not be anxious)
+    note: "Every good gift from above; remember the Lord; seek first the kingdom.",
+    songs: [
+      "10,000 Reasons (Bless the Lord)",
+      "Goodness of God",
+      "Great is Thy Faithfulness",
+      "All Creatures of Our God and King",
+      "Doxology",
+      "Praise to the Lord, the Almighty",
+      "Blessed Be Your Name",
+      "For the Beauty of the Earth"
+    ]
+  },
+  "2026-11-29": { // Advent 1 Year B — Isa 64 (rend heavens), 1 Cor 1, Mark 13:24-37 (Son of Man coming)
+    note: "Rend the heavens and come down; Christ's return in glory; watchfulness; the second Advent.",
+    songs: [
+      "Come Thou Long Expected Jesus",
+      "O Come O Come Emmanuel",
+      "Lo, He Comes With Clouds Descending",
+      "Even So Come",
+      "Soon and Very Soon",
+      "Let All Mortal Flesh Keep Silence",
+      "Days of Elijah",
+      "Living Hope"
+    ]
+  },
+  "2026-12-06": { // Advent 2 Year B — Isa 40 (comfort, voice in wilderness), Mark 1:1-8 (John the Baptist)
+    note: "Comfort ye my people; voice crying in the wilderness; prepare the way; John the Baptist.",
+    songs: [
+      "O Come O Come Emmanuel",
+      "Come Thou Long Expected Jesus",
+      "Dawning Light of Our Salvation",
+      "Lord I Need You",
+      "Come As You Are",
+      "Even So Come",
+      "Behold the Lamb",
+      "Be Thou My Vision"
+    ]
+  },
+  "2026-12-13": { // Advent 3 Year B — Isa 65:17-25 (new heavens/earth), Ps 126 (those who sow in tears), John 1/3 (John's witness)
+    note: "New heavens and new earth; restoration of Zion; John bears witness to the Light; he must increase.",
+    songs: [
+      "Come Thou Long Expected Jesus",
+      "O Come O Come Emmanuel",
+      "I Am Making All Things New",
+      "Behold the Lamb",
+      "Dawning Light of Our Salvation",
+      "We Will Feast in the House of Zion",
+      "Even So Come",
+      "Goodness of God"
+    ]
+  },
+  "2026-12-20": { // Advent 4 Year B — 2 Sam 7 (Davidic covenant), Rom 16 (mystery revealed), Luke 1:26-38 (Annunciation)
+    note: "Davidic covenant fulfilled; mystery hidden for ages now revealed; Mary's 'yes'; the Word made flesh approaches.",
+    songs: [
+      "O Come O Come Emmanuel",
+      "Come Thou Long Expected Jesus",
+      "Of the Father's Love Begotten",
+      "What A Beautiful Name",
+      "Dawning Light of Our Salvation",
+      "King of Kings",
+      "Be Thou My Vision",
+      "In Christ Alone"
+    ]
+  },
+  "2026-12-24": { // Christmas Eve
+    note: "Incarnation; the Word made flesh; angels and shepherds; candlelight worship.",
+    songs: [
+      "O Come All Ye Faithful",
+      "Hark the Herald Angels Sing",
+      "Joy to the World",
+      "Silent Night",
+      "O Holy Night",
+      "What Child is This",
+      "It Came Upon a Midnight Clear",
+      "Angels We Have Heard on High"
+    ]
+  },
+  "2026-12-25": { // Christmas Day
+    note: "The Nativity: Word made flesh; tidings of great joy; God with us.",
+    songs: [
+      "Joy to the World",
+      "Hark the Herald Angels Sing",
+      "O Come All Ye Faithful",
+      "What Child is This",
+      "Angels We Have Heard on High",
+      "Go Tell it on the Mountain",
+      "Good Christian Men Rejoice",
+      "What A Beautiful Name"
+    ]
+  },
+  "2026-12-27": { // First Sunday after Christmas Year B — Isa 61:10—62:5 (clothed with salvation), Gal 3:23—4:7 (adoption), John 1:1-18
+    note: "Clothed in salvation; adopted as sons through Christ; the Word made flesh; God's eternal Son.",
+    songs: [
+      "Of the Father's Love Begotten",
+      "O Come All Ye Faithful",
+      "Joy to the World",
+      "What A Beautiful Name",
+      "No Longer Slaves",
+      "Hark the Herald Angels Sing",
+      "Be Thou My Vision",
+      "In Christ Alone"
+    ]
+  }
+};
+
+/* =========================================================================
+   STATE & STORAGE
+   ========================================================================= */
+const API_URL_KEY = "ctr-api-url";
+const CACHE_KEY = "ctr-schedule-cache-v1";
+
+const state = {
+  weeks: [],
+  filterSeason: "all",
+  search: "",
+  editing: false,
+  openWeeks: new Set(),
+  saveTimer: null,
+  loaded: false,
+  dirtyWeeks: new Set(),
+  apiUrl: null,
+  online: false,
+  showPast: false
+};
+
+/* Convert between the nested week shape (UI) and flat row shape (Sheet) */
+const SHEET_HEADERS = [
+  "id", "date", "service", "season",
+  "ot", "psalm", "epistle", "gospel",
+  "sermonPassage", "preacher", "musicLeader", "band", "openingAcclamation",
+  "song_entrance", "song_2", "song_3", "song_communion", "song_ending",
+  "notes"
+];
+
+function weekToRow(w) {
+  return {
+    id: w.id, date: w.date, service: w.service, season: w.season,
+    ot: w.readings.ot, psalm: w.readings.psalm, epistle: w.readings.epistle, gospel: w.readings.gospel,
+    sermonPassage: w.sermonPassage, preacher: w.preacher, musicLeader: w.musicLeader,
+    band: w.band, openingAcclamation: w.openingAcclamation,
+    song_entrance: w.songs.entrance, song_2: w.songs.song2, song_3: w.songs.song3,
+    song_communion: w.songs.communion, song_ending: w.songs.ending,
+    notes: w.notes
+  };
+}
+
+function rowToWeek(r) {
+  const dateStr = normalizeDateStr(r.date);
+  /* If id looks like a date (which it does for our default schedule),
+     normalize it the same way so frontend/backend matching stays consistent */
+  let idStr = String(r.id || "");
+  if (idStr instanceof Date || /^\d{4}-\d{2}-\d{2}/.test(idStr) || idStr.includes("T")) {
+    idStr = normalizeDateStr(r.id) || idStr;
+  }
+  return {
+    id: idStr,
+    date: dateStr,
+    service: String(r.service || ""),
+    season: String(r.season || "Ordinary Time"),
+    readings: {
+      ot: String(r.ot || ""),
+      psalm: String(r.psalm || ""),
+      epistle: String(r.epistle || ""),
+      gospel: String(r.gospel || "")
+    },
+    sermonPassage: String(r.sermonPassage || ""),
+    preacher: String(r.preacher || ""),
+    musicLeader: String(r.musicLeader || ""),
+    band: String(r.band || ""),
+    openingAcclamation: String(r.openingAcclamation || ""),
+    songs: {
+      entrance: String(r.song_entrance || ""),
+      song2: String(r.song_2 || ""),
+      song3: String(r.song_3 || ""),
+      communion: String(r.song_communion || ""),
+      ending: String(r.song_ending || "")
+    },
+    notes: String(r.notes || "")
+  };
+}
+
+/* Sheets API calls */
+async function sheetsGet() {
+  const url = state.apiUrl;
+  if (!url) throw new Error("No API URL configured");
+  const res = await fetch(url, { method: "GET" });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return (data.weeks || []).map(rowToWeek);
+}
+
+async function sheetsUpsert(week) {
+  const url = state.apiUrl;
+  if (!url) throw new Error("No API URL configured");
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "upsert", week: weekToRow(week) })
+  });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+async function sheetsReplaceAll(weeks) {
+  const url = state.apiUrl;
+  if (!url) throw new Error("No API URL configured");
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify({ action: "replace", weeks: weeks.map(weekToRow) })
+  });
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+/* Cache helpers */
+function readCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+function writeCache(weeks) {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify(weeks)); } catch {}
+}
+
+async function loadData() {
+  setStatus("loading");
+  state.apiUrl = localStorage.getItem(API_URL_KEY);
+
+  /* Show cache immediately if available */
+  const cached = readCache();
+  if (cached && cached.length) {
+    state.weeks = cached;
+    state.loaded = true;
+  }
+
+  if (!state.apiUrl) {
+    /* No connection — fall back to defaults if no cache */
+    if (!state.weeks.length) state.weeks = DEFAULT_WEEKS;
+    state.loaded = true;
+    state.online = false;
+    showConnBanner(true);
+    setStatus("offline");
+    return;
+  }
+
+  /* Try fetching from Sheet */
+  try {
+    const remote = await sheetsGet();
+    if (remote.length === 0) {
+      /* Sheet is empty — seed with defaults */
+      setStatus("saving");
+      await sheetsReplaceAll(DEFAULT_WEEKS);
+      state.weeks = DEFAULT_WEEKS;
+    } else {
+      state.weeks = remote;
+    }
+    writeCache(state.weeks);
+    state.loaded = true;
+    state.online = true;
+    showConnBanner(false);
+    setStatus("saved");
+  } catch (e) {
+    console.error("Sheet load failed:", e);
+    if (!state.weeks.length) state.weeks = DEFAULT_WEEKS;
+    state.loaded = true;
+    state.online = false;
+    showConnBanner(true);
+    setStatus("offline");
+  }
+}
+
+function debouncedPersist(weekId) {
+  state.dirtyWeeks.add(weekId);
+  clearTimeout(state.saveTimer);
+  setStatus("saving");
+  state.saveTimer = setTimeout(flushDirty, 700);
+}
+
+async function flushDirty() {
+  const ids = Array.from(state.dirtyWeeks);
+  state.dirtyWeeks.clear();
+  if (ids.length === 0) return;
+
+  /* Cache locally first — always */
+  writeCache(state.weeks);
+
+  if (!state.apiUrl) {
+    setStatus("offline");
+    return;
+  }
+
+  setStatus("saving");
+  try {
+    for (const id of ids) {
+      const week = state.weeks.find(w => w.id === id);
+      if (week) await sheetsUpsert(week);
+    }
+    state.online = true;
+    showConnBanner(false);
+    setStatus("saved");
+  } catch (e) {
+    console.error("Save failed:", e);
+    /* Put back in dirty queue for retry */
+    ids.forEach(id => state.dirtyWeeks.add(id));
+    state.online = false;
+    setStatus("error");
+  }
+}
+
+async function refreshFromSheet() {
+  if (!state.apiUrl) return;
+  setStatus("loading");
+  try {
+    const remote = await sheetsGet();
+    if (remote.length > 0) {
+      state.weeks = remote;
+      writeCache(state.weeks);
+    }
+    state.online = true;
+    showConnBanner(false);
+    setStatus("saved");
+    render();
+  } catch (e) {
+    console.error("Refresh failed:", e);
+    state.online = false;
+    showConnBanner(true);
+    setStatus("offline");
+  }
+}
+
+function showConnBanner(show) {
+  const banner = document.getElementById("connBanner");
+  if (banner) banner.classList.toggle("show", show);
+}
+
+function setStatus(s) {
+  const el = document.getElementById("status");
+  if (!el) return;
+  el.className = "status " + s;
+  el.textContent = s === "loading" ? "loading…"
+                 : s === "saving" ? "saving…"
+                 : s === "error" ? "save failed"
+                 : s === "offline" ? "offline"
+                 : "saved";
+}
+
+/* =========================================================================
+   DATE UTILS
+   ========================================================================= */
+function parseDate(input) {
+  if (!input) return new Date(NaN);
+  if (input instanceof Date) return input;
+  const s = String(input).trim();
+  /* Prefer YYYY-MM-DD interpreted in local time to avoid UTC shift */
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) {
+    return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  }
+  /* Fallback: let JS parse whatever it is */
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? new Date(NaN) : d;
+}
+
+/* Convert anything date-ish to a canonical YYYY-MM-DD string.
+   Handles: Date objects, ISO timestamps from Sheets, already-formatted strings. */
+function normalizeDateStr(input) {
+  if (!input) return "";
+  const d = (input instanceof Date) ? input : parseDate(input);
+  if (isNaN(d.getTime())) {
+    /* Last-ditch: if it's a string that starts with YYYY-MM-DD, slice it */
+    const s = String(input);
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+    return "";
+  }
+  const yr = d.getFullYear();
+  const mo = String(d.getMonth() + 1).padStart(2, "0");
+  const dy = String(d.getDate()).padStart(2, "0");
+  return `${yr}-${mo}-${dy}`;
+}
+
+function formatLong(iso) {
+  const d = parseDate(iso);
+  return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+}
+
+function formatDay(iso) {
+  const d = parseDate(iso);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function formatWeekday(iso) {
+  const d = parseDate(iso);
+  return d.toLocaleDateString("en-US", { weekday: "short" });
+}
+
+function findThisSundayIndex() {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  /* Find the next upcoming week (today or after) */
+  let idx = state.weeks.findIndex(w => parseDate(w.date) >= now);
+  if (idx === -1) idx = state.weeks.length - 1;
+  return idx;
+}
+
+/* =========================================================================
+   RENDER
+   ========================================================================= */
+const $ = (sel) => document.querySelector(sel);
+
+function escapeHtml(s) {
+  return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+function fieldVal(value, placeholder = "—") {
+  const empty = !value || !value.trim();
+  return `<div class="field-val${empty ? " empty" : ""}" data-placeholder="${escapeHtml(placeholder)}">${empty ? "" : escapeHtml(value)}</div>`;
+}
+
+function editableField(weekId, path, value, placeholder = "—", block = false) {
+  const safe = escapeHtml(value || "");
+  const empty = !value || !value.trim();
+  const cls = block
+    ? `field-val editable editable-block${empty ? " empty" : ""}`
+    : `field-val editable${empty ? " empty" : ""}`;
+  return `<div class="${cls}" data-week="${weekId}" data-path="${path}" data-placeholder="${escapeHtml(placeholder)}" contenteditable="false">${safe}</div>`;
+}
+
+function renderThisSunday() {
+  const idx = findThisSundayIndex();
+  const w = state.weeks[idx];
+  if (!w) return;
+  const card = $("#thisSundayCard");
+  const color = SEASON_COLORS[w.season] || SEASON_COLORS["Ordinary Time"];
+  card.style.setProperty("--lit-color", color);
+  card.innerHTML = `
+    <div class="this-sunday-inner">
+      <div class="label">This Sunday · ${escapeHtml(w.season)}</div>
+      <h2>${escapeHtml(w.service)}</h2>
+      <div class="date-line">${formatLong(w.date)}</div>
+      <div class="this-sunday-grid">
+        <div>
+          <div class="field-label">Sermon Passage</div>
+          ${fieldVal(w.sermonPassage, "—")}
+        </div>
+        <div>
+          <div class="field-label">Preacher</div>
+          ${fieldVal(w.preacher, "—")}
+        </div>
+        <div>
+          <div class="field-label">Music Leader</div>
+          ${fieldVal(w.musicLeader, "—")}
+        </div>
+        <div>
+          <div class="field-label">Band</div>
+          ${fieldVal(w.band, "—")}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderWeek(w, isCurrent) {
+  const color = SEASON_COLORS[w.season] || SEASON_COLORS["Ordinary Time"];
+  const isPast = parseDate(w.date) < new Date(new Date().setHours(0,0,0,0)) && !isCurrent;
+  const isOpen = state.openWeeks.has(w.id);
+  const dateObj = parseDate(w.date);
+  const day = dateObj.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const weekday = dateObj.toLocaleDateString("en-US", { weekday: "long" });
+
+  const peopleLine = [w.preacher, w.musicLeader].filter(Boolean).join(" · ");
+
+  return `
+    <article class="week ${isPast ? "is-past" : ""} ${isCurrent ? "is-current" : ""} ${isOpen ? "is-open" : ""}" data-id="${w.id}" style="--lit-color: ${color}">
+      <div class="week-head" data-action="toggle">
+        <div class="week-date">
+          <div class="weekday">${weekday}</div>
+          <div class="day">${day}</div>
+        </div>
+        <div class="week-service">
+          <div class="title">${escapeHtml(w.service)}</div>
+          <div class="meta">${peopleLine ? `Preacher: <strong>${escapeHtml(w.preacher || "—")}</strong> · Music: <strong>${escapeHtml(w.musicLeader || "—")}</strong>` : "<em>unassigned</em>"}</div>
+        </div>
+        <div class="week-toggle">⌄</div>
+      </div>
+
+      <div class="week-body">
+        <div class="section-block">
+          <div class="section-title">Lectionary Readings</div>
+          <div class="readings-grid">
+            <div class="field">
+              <div class="field-label-sm">Old Testament</div>
+              ${editableField(w.id, "readings.ot", w.readings.ot, "—")}
+            </div>
+            <div class="field">
+              <div class="field-label-sm">Psalm</div>
+              ${editableField(w.id, "readings.psalm", w.readings.psalm, "—")}
+            </div>
+            <div class="field">
+              <div class="field-label-sm">Epistle</div>
+              ${editableField(w.id, "readings.epistle", w.readings.epistle, "—")}
+            </div>
+            <div class="field">
+              <div class="field-label-sm">Gospel</div>
+              ${editableField(w.id, "readings.gospel", w.readings.gospel, "—")}
+            </div>
+            <div class="field" style="grid-column: 1 / -1;">
+              <div class="field-label-sm">Sermon Passage</div>
+              <div class="sermon-passage-wrap">${editableField(w.id, "sermonPassage", w.sermonPassage, "—")}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block">
+          <div class="section-title">Clergy & Musicians</div>
+          <div class="people-grid">
+            <div class="field">
+              <div class="field-label-sm">Preacher</div>
+              ${editableField(w.id, "preacher", w.preacher, "—")}
+            </div>
+            <div class="field">
+              <div class="field-label-sm">Music Leader</div>
+              ${editableField(w.id, "musicLeader", w.musicLeader, "—")}
+            </div>
+            <div class="field" style="grid-column: 1 / -1;">
+              <div class="field-label-sm">Band Members</div>
+              ${editableField(w.id, "band", w.band, "—")}
+            </div>
+            <div class="field" style="grid-column: 1 / -1;">
+              <div class="field-label-sm">Opening Acclamation</div>
+              ${editableField(w.id, "openingAcclamation", w.openingAcclamation, "—", true)}
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block span-2">
+          <div class="section-title">Music</div>
+          <div class="songs-grid">
+            <div class="field">
+              <div class="field-label-sm">Entrance / Song 1</div>
+              ${editableField(w.id, "songs.entrance", w.songs.entrance, "—")}
+            </div>
+            <div class="field">
+              <div class="field-label-sm">Song 2</div>
+              ${editableField(w.id, "songs.song2", w.songs.song2, "—")}
+            </div>
+            <div class="field">
+              <div class="field-label-sm">Song 3</div>
+              ${editableField(w.id, "songs.song3", w.songs.song3, "—")}
+            </div>
+            <div class="field">
+              <div class="field-label-sm">Communion</div>
+              ${editableField(w.id, "songs.communion", w.songs.communion, "—")}
+            </div>
+            <div class="field" style="grid-column: 1 / -1;">
+              <div class="field-label-sm">Ending / Recessional</div>
+              ${editableField(w.id, "songs.ending", w.songs.ending, "—")}
+            </div>
+          </div>
+        </div>
+
+        ${renderSuggestedSongs(w)}
+
+        <div class="section-block span-2">
+          <div class="section-title">Notes</div>
+          ${editableField(w.id, "notes", w.notes, "—", true)}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderSuggestedSongs(w) {
+  const suggestion = SUGGESTED_SONGS[w.id];
+  if (!suggestion) return "";
+  const songItems = suggestion.songs
+    .map(song => `<li>${escapeHtml(song)}</li>`)
+    .join("");
+  return `
+    <div class="section-block span-2 suggested-block">
+      <div class="section-title">
+        <span>Suggested Songs</span>
+        <span class="badge">themes from today's readings &amp; season</span>
+      </div>
+      ${suggestion.note ? `<div class="suggested-note">${escapeHtml(suggestion.note)}</div>` : ""}
+      <ul class="suggested-songs">${songItems}</ul>
+    </div>
+  `;
+}
+
+function isPastWeek(w) {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return parseDate(w.date) < today;
+}
+
+function matchesFilter(w) {
+  if (!state.showPast && isPastWeek(w)) return false;
+  if (state.filterSeason !== "all" && w.season !== state.filterSeason) return false;
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    const haystack = [
+      w.service, w.preacher, w.musicLeader, w.band, w.sermonPassage, w.notes,
+      w.readings.ot, w.readings.psalm, w.readings.epistle, w.readings.gospel,
+      w.songs.entrance, w.songs.song2, w.songs.song3, w.songs.communion, w.songs.ending,
+      w.season, w.date
+    ].join(" ").toLowerCase();
+    if (!haystack.includes(q)) return false;
+  }
+  return true;
+}
+
+function updatePastToggleLabel() {
+  const btn = document.getElementById("pastToggle");
+  if (!btn) return;
+  const pastCount = state.weeks.filter(isPastWeek).length;
+  if (pastCount === 0) {
+    btn.style.display = "none";
+    return;
+  }
+  btn.style.display = "";
+  btn.textContent = state.showPast ? "Hide past" : `Show past (${pastCount})`;
+  btn.classList.toggle("active", state.showPast);
+}
+
+function render() {
+  if (!state.loaded) return;
+
+  renderThisSunday();
+  updatePastToggleLabel();
+
+  const sched = $("#schedule");
+  const visible = state.weeks.filter(matchesFilter);
+  const currentIdx = findThisSundayIndex();
+  const currentId = state.weeks[currentIdx]?.id;
+
+  if (visible.length === 0) {
+    sched.innerHTML = `<div class="loading">No services match this filter.</div>`;
+    return;
+  }
+
+  /* Group by season, but preserve chronological order */
+  let html = "";
+  let lastSeason = null;
+  for (const w of visible) {
+    if (w.season !== lastSeason) {
+      const color = SEASON_COLORS[w.season] || SEASON_COLORS["Ordinary Time"];
+      html += `<div class="season-divider" style="--lit-color: ${color}">
+                 <span class="swatch"></span>
+                 <h3>${escapeHtml(w.season)}</h3>
+                 <span class="rule"></span>
+               </div>`;
+      lastSeason = w.season;
+    }
+    html += renderWeek(w, w.id === currentId);
+  }
+  sched.innerHTML = html;
+  applyEditableState();
+}
+
+function applyEditableState() {
+  document.querySelectorAll(".editable").forEach(el => {
+    el.contentEditable = state.editing ? "true" : "false";
+    el.spellcheck = state.editing;
+  });
+}
+
+/* =========================================================================
+   EVENTS
+   ========================================================================= */
+function getByPath(obj, path) {
+  return path.split(".").reduce((o, k) => o?.[k], obj);
+}
+function setByPath(obj, path, value) {
+  const parts = path.split(".");
+  const last = parts.pop();
+  const target = parts.reduce((o, k) => o[k] = o[k] || {}, obj);
+  target[last] = value;
+}
+
+function attachEvents() {
+  /* Edit toggle */
+  $("#editToggle").addEventListener("click", () => {
+    state.editing = !state.editing;
+    document.body.classList.toggle("editing", state.editing);
+    $("#editToggle").textContent = state.editing ? "Done editing" : "Edit";
+    $("#editToggle").classList.toggle("active", state.editing);
+    applyEditableState();
+  });
+
+  /* Today button */
+  $("#todayBtn").addEventListener("click", () => {
+    const idx = findThisSundayIndex();
+    const id = state.weeks[idx]?.id;
+    if (id) {
+      state.openWeeks.add(id);
+      render();
+      setTimeout(() => {
+        const el = document.querySelector(`.week[data-id="${id}"]`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
+    }
+  });
+
+  /* Show/hide past services */
+  $("#pastToggle").addEventListener("click", () => {
+    state.showPast = !state.showPast;
+    render();
+    /* If we just hid past, scroll back to top so the user lands on upcoming */
+    if (!state.showPast) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  });
+
+  /* Season chips */
+  document.querySelectorAll(".chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      state.filterSeason = chip.dataset.season;
+      render();
+    });
+  });
+
+  /* Search */
+  $("#searchInput").addEventListener("input", (e) => {
+    state.search = e.target.value;
+    render();
+  });
+
+  /* Week toggle + editing - delegated */
+  $("#schedule").addEventListener("click", (e) => {
+    const head = e.target.closest('[data-action="toggle"]');
+    if (head) {
+      /* In edit mode, only toggle when clicking the arrow */
+      if (state.editing && !e.target.closest(".week-toggle")) return;
+      const week = head.closest(".week");
+      const id = week.dataset.id;
+      if (state.openWeeks.has(id)) state.openWeeks.delete(id);
+      else state.openWeeks.add(id);
+      week.classList.toggle("is-open");
+    }
+  });
+
+  /* Inline edits — capture blur on editable cells */
+  $("#schedule").addEventListener("blur", (e) => {
+    const el = e.target.closest(".editable");
+    if (!el || !state.editing) return;
+    const weekId = el.dataset.week;
+    const path = el.dataset.path;
+    const newVal = el.innerText.replace(/\u00A0/g, " ").trim();
+    const week = state.weeks.find(w => w.id === weekId);
+    if (!week) return;
+    const current = getByPath(week, path);
+    if (current !== newVal) {
+      setByPath(week, path, newVal);
+      debouncedPersist(weekId);
+      /* Re-style empty class */
+      el.classList.toggle("empty", !newVal);
+      /* Update header line if relevant */
+      if (path === "service" || path === "preacher" || path === "musicLeader") {
+        const head = el.closest(".week").querySelector(".week-service");
+        const meta = head.querySelector(".meta");
+        meta.innerHTML = `Preacher: <strong>${escapeHtml(week.preacher || "—")}</strong> · Music: <strong>${escapeHtml(week.musicLeader || "—")}</strong>`;
+      }
+      /* Update This Sunday card if it's this week */
+      if (weekId === state.weeks[findThisSundayIndex()]?.id) {
+        renderThisSunday();
+      }
+    }
+  }, true);
+
+  /* Prevent Enter from inserting <br> inside single-line fields */
+  $("#schedule").addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && e.target.closest(".editable") && !e.target.classList.contains("editable-block")) {
+      e.preventDefault();
+      e.target.blur();
+    }
+  });
+
+  /* Refresh from sheet */
+  $("#refreshBtn").addEventListener("click", () => refreshFromSheet());
+
+  /* Export */
+  $("#exportBtn").addEventListener("click", () => {
+    const data = JSON.stringify({ weeks: state.weeks, exportedAt: new Date().toISOString() }, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ctr-schedule-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+  /* Settings / Setup modal */
+  function openSetup() {
+    document.getElementById("setupModal").classList.add("open");
+    /* Pre-fill the URL if it's already set */
+    const existing = localStorage.getItem(API_URL_KEY) || "";
+    document.getElementById("apiUrlInput").value = existing;
+    document.getElementById("modalMsg").className = "modal-msg";
+    document.getElementById("modalMsg").textContent = "";
+    /* Populate the apps script code */
+    document.getElementById("appsScriptCode").value = APPS_SCRIPT_CODE;
+  }
+  function closeSetup() {
+    document.getElementById("setupModal").classList.remove("open");
+  }
+  $("#settingsBtn").addEventListener("click", openSetup);
+  $("#connBtn").addEventListener("click", openSetup);
+  $("#modalClose").addEventListener("click", closeSetup);
+  document.getElementById("setupModal").addEventListener("click", (e) => {
+    if (e.target.id === "setupModal") closeSetup();
+  });
+
+  /* Copy code button */
+  $("#copyCode").addEventListener("click", async () => {
+    const textarea = document.getElementById("appsScriptCode");
+    textarea.select();
+    try {
+      await navigator.clipboard.writeText(textarea.value);
+      const btn = document.getElementById("copyCode");
+      btn.classList.add("copied");
+      btn.textContent = "Copied!";
+      setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.textContent = "Copy";
+      }, 1800);
+    } catch (e) {
+      document.execCommand("copy");
+    }
+  });
+
+  /* Connect button */
+  $("#connectBtn").addEventListener("click", async () => {
+    const url = document.getElementById("apiUrlInput").value.trim();
+    const msg = document.getElementById("modalMsg");
+    msg.className = "modal-msg";
+
+    if (!url) {
+      msg.className = "modal-msg show error";
+      msg.textContent = "Please paste the Web app URL.";
+      return;
+    }
+    if (!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec/.test(url)) {
+      msg.className = "modal-msg show error";
+      msg.textContent = "That doesn't look like a valid Apps Script /exec URL. It should start with https://script.google.com/macros/s/ and end with /exec.";
+      return;
+    }
+
+    msg.className = "modal-msg show";
+    msg.textContent = "Testing connection…";
+    try {
+      const res = await fetch(url, { method: "GET" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      /* Success */
+      localStorage.setItem(API_URL_KEY, url);
+      state.apiUrl = url;
+      msg.className = "modal-msg show success";
+      const count = (data.weeks || []).length;
+      if (count === 0) {
+        msg.textContent = "Connected. Sheet is empty — seeding with the default schedule…";
+        await sheetsReplaceAll(DEFAULT_WEEKS);
+        state.weeks = DEFAULT_WEEKS;
+        writeCache(state.weeks);
+        msg.textContent = `Connected. Seeded ${DEFAULT_WEEKS.length} services. Closing…`;
+      } else {
+        state.weeks = (data.weeks || []).map(rowToWeek);
+        writeCache(state.weeks);
+        msg.textContent = `Connected. Loaded ${count} services from sheet. Closing…`;
+      }
+      state.online = true;
+      showConnBanner(false);
+      setStatus("saved");
+      render();
+      setTimeout(closeSetup, 1400);
+    } catch (e) {
+      msg.className = "modal-msg show error";
+      msg.textContent = "Couldn't reach the sheet: " + e.message + ". Check that the deployment is set to 'Anyone' access and you've authorized the script.";
+    }
+  });
+}
+
+/* =========================================================================
+   APPS SCRIPT CODE — pasted into Extensions > Apps Script of the Sheet
+   ========================================================================= */
+const APPS_SCRIPT_CODE = `const SHEET_NAME = "Schedule";
+const HEADERS = [
+  "id", "date", "service", "season",
+  "ot", "psalm", "epistle", "gospel",
+  "sermonPassage", "preacher", "musicLeader", "band", "openingAcclamation",
+  "song_entrance", "song_2", "song_3", "song_communion", "song_ending",
+  "notes"
+];
+
+function getSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(SHEET_NAME);
+  }
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS]);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight("bold");
+  }
+  return sheet;
+}
+
+function doGet(e) {
+  try {
+    const sheet = getSheet();
+    const data = sheet.getDataRange().getValues();
+    if (data.length <= 1) return jsonResponse({ weeks: [] });
+    const headers = data[0];
+    const weeks = data.slice(1).map(row => {
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = row[i]);
+      return obj;
+    }).filter(w => w.id);
+    return jsonResponse({ weeks: weeks });
+  } catch (err) {
+    return jsonResponse({ error: err.toString() });
+  }
+}
+
+function doPost(e) {
+  try {
+    const sheet = getSheet();
+    const payload = JSON.parse(e.postData.contents);
+    if (payload.action === "upsert") {
+      if (!payload.week || !payload.week.id) throw new Error("Missing week.id");
+      upsertRow(sheet, payload.week);
+      return jsonResponse({ success: true });
+    }
+    if (payload.action === "replace") {
+      const weeks = payload.weeks || [];
+      const last = sheet.getLastRow();
+      if (last > 1) sheet.getRange(2, 1, last - 1, HEADERS.length).clearContent();
+      if (weeks.length > 0) {
+        const rows = weeks.map(w => HEADERS.map(h => w[h] !== undefined && w[h] !== null ? w[h] : ""));
+        sheet.getRange(2, 1, rows.length, HEADERS.length).setValues(rows);
+      }
+      return jsonResponse({ success: true, count: weeks.length });
+    }
+    return jsonResponse({ error: "Unknown action: " + payload.action });
+  } catch (err) {
+    return jsonResponse({ error: err.toString() });
+  }
+}
+
+function upsertRow(sheet, week) {
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+  const idIdx = headers.indexOf("id");
+  let rowIdx = -1;
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][idIdx]) === String(week.id)) {
+      rowIdx = i + 1;
+      break;
+    }
+  }
+  const rowData = headers.map(h => week[h] !== undefined && week[h] !== null ? week[h] : "");
+  if (rowIdx === -1) {
+    sheet.appendRow(rowData);
+  } else {
+    sheet.getRange(rowIdx, 1, 1, headers.length).setValues([rowData]);
+  }
+}
+
+function jsonResponse(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+
+/* =========================================================================
+   BOOT
+   ========================================================================= */
+(async () => {
+  attachEvents();
+  await loadData();
+  /* Auto-open the current Sunday on load */
+  const idx = findThisSundayIndex();
+  if (state.weeks[idx]) state.openWeeks.add(state.weeks[idx].id);
+  render();
+
+  /* When printing, temporarily show past services so the printout is complete */
+  let _wasShowingPast = false;
+  window.addEventListener("beforeprint", () => {
+    _wasShowingPast = state.showPast;
+    if (!state.showPast) {
+      state.showPast = true;
+      render();
+    }
+  });
+  window.addEventListener("afterprint", () => {
+    if (state.showPast !== _wasShowingPast) {
+      state.showPast = _wasShowingPast;
+      render();
+    }
+  });
+
+  /* If no API URL configured, prompt setup on first run */
+  if (!state.apiUrl) {
+    setTimeout(() => {
+      document.getElementById("setupModal").classList.add("open");
+      document.getElementById("appsScriptCode").value = APPS_SCRIPT_CODE;
+    }, 400);
+  }
+})();
+</script>
+</body>
+</html>
